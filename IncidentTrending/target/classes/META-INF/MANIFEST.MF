@@ -1,0 +1,37 @@
+Manifest-Version: 1.0
+Atlassian-Build-Date: 2018-05-08T19:39:27+0800
+Atlassian-Plugin-Key: IncidentTrending.IncidentTrending
+Bnd-LastModified: 1525779571657
+Build-Jdk: 1.8.0_144
+Built-By: Techm
+Bundle-Description: This is the IncidentTrending:IncidentTrending plugin
+  for Atlassian JIRA.
+Bundle-DocURL: http://www.example.com/
+Bundle-ManifestVersion: 2
+Bundle-Name: IncidentTrending
+Bundle-SymbolicName: IncidentTrending
+Bundle-Vendor: Example Company
+Bundle-Version: 1.0.0
+Created-By: Apache Maven Bundle Plugin
+Export-Package: com.jtc.incident.trending.dashboard.api;version="1.0.0"
+Import-Package: org.springframework.osgi.context;resolution:=optional,or
+ g.springframework.osgi.service.exporter.support;resolution:=optional,or
+ g.springframework.osgi.service.importer.support;resolution:=optional,or
+ g.eclipse.gemini.blueprint.context;resolution:=optional,org.eclipse.gem
+ ini.blueprint.service.exporter;resolution:=optional,org.eclipse.gemini.
+ blueprint.service.exporter.support;resolution:=optional,org.eclipse.gem
+ ini.blueprint.service.importer.support;resolution:=optional,com.atlassi
+ an.plugin.osgi.factory,com.atlassian.sal.api,com.google.common.base,com
+ .google.common.collect,com.jtc.incident.trending.dashboard.api;version=
+ "[1.0,2)",javax.annotation,javax.inject,org.apache.commons.lang,org.apa
+ che.commons.logging,org.osgi.framework,org.springframework.aop.support,
+ org.springframework.beans,org.springframework.beans.factory,org.springf
+ ramework.beans.factory.annotation,org.springframework.beans.factory.con
+ fig,org.springframework.beans.factory.parsing,org.springframework.beans
+ .factory.support,org.springframework.beans.factory.xml,org.springframew
+ ork.context.annotation,org.springframework.core.io,org.springframework.
+ stereotype,org.springframework.util,org.w3c.dom
+Originally-Created-By: Apache Maven Bundle Plugin
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.6))"
+Spring-Context: *
+Tool: Bnd-2.4.1.201501161923

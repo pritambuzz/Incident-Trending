@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+    <ModulePrefs title="__MSG_incident-trending-by-status-(-by-month-).name__"
+                 title_url="Incident trending by status (by month)"
+                 directory_title="__MSG_incident-trending-by-status-(-by-month-).name__"
+                 description="__MSG_incident-trending-by-status-(-by-month-).description__"
+                 author=""
+                 author_email=""
+                 screenshot='http://www.google.com/gadgets/directory/2661487601-no_preview.gif'
+                 thumbnail='http://www.google.com/gadgets/directory/348515928-no_image_gadget_thm.png'
+                 >
+        <Optional feature="gadget-directory">
+            <Param name="categories">
+                JIRA
+            </Param>
+        </Optional>
+        <Require feature="setprefs"/>
+        #supportedLocales("incident-trending-by-status-(-by-month-)")
+    </ModulePrefs>
+    <UserPref name="isConfigured" datatype="hidden" default_value="false"/>
+    <Content type="html" view="profile">
+        <![CDATA[ 
+		    #requireResource("IncidentTrending.IncidentTrending:IncidentTrending-resources")
+			#includeResources()
+            <html>
+			<head>  
+			<meta charset="utf-8" />
+			<script>
+			window.onload = function() {
+					var dataPoints1 = [];
+					var urlReturn = "";
+					var urlFormat = "";
+					
+					function daysInMonth(y, m) {
+					    return /4|6|9|11/.test(m)?30:m==2?(!(y%4)&&y%100)||!(y%400)?29:28:31;
+					}
+					    
+					
+					function formatDate(date) {
+						var d = new Date(date),
+							month = '' + (d.getMonth() + 1),
+							day = '' + d.getDate(),
+							year = d.getFullYear();
+
+						if (month.length < 2) month = '0' + month;
+						if (day.length < 2) day = '0' + day;
+
+						return [year, month, day].join('/');
+					}
+
+					function formatLabelDate(date) {
+						var d = new Date(date),
+							month = '' + (d.getMonth() + 1),
+							day = '' + d.getDate(),
+							year = d.getFullYear();
+
+						if (month.length < 2) month = '0' + month;
+						if (day.length < 2) day = '0' + day;
+
+						return [year, month, day].join(',');
+					}
+					
+					function getPrevious() {
+						var dateObj = new Date();
+						var dateFrom = [];
+						var dateTo = [];
+						var tempFrom = [];
+						var tempTo = [];
+						var dateStrings = [];
+						var dateFormatOptions = {
+						  month: 'numeric',
+						  year: 'numeric',
+						  day: 'numeric'
+						};
+
+						for (var i = 0; i < 12; ++i) {
+						  dateStrings.unshift(dateObj.toLocaleString('en-US', dateFormatOptions));
+						  dateObj.setMonth(dateObj.getMonth() - 1);
+						}
+						for(var i = 0; i < 12; ++i) {
+							tempFrom = dateStrings[i].split("/");
+							dateFrom[i] = tempFrom[2] + "/" + tempFrom[0] + "/01";
+							//console.log("Date From  "+dateFrom[i]);
+							
+							tempTo = dateStrings[i].split("/");
+							
+							var daysInMon = daysInMonth(tempTo[2], tempTo[0]);
+							var x = tempTo[0].toString();
+							dateTo[i] = tempTo[2] + "/" + tempTo[0] + "/"+ daysInMon;
+							//console.log(dateTo[i]+ " - " +daysInMon);
+							//console.log(tempTo[0] == 2);
+														
+							//console.log(dateFrom[i]+" From and To "+dateTo[i]);
+							var urlJson = "/rest/api/2/search?jql=project=ITS%20AND%20createdDate%20>=%20%27"+dateFrom[i]+"%27%20AND%20createdDate%20<=%20%27"+dateTo[i]+"%27&format=json";
+							//console.log(dateFrom[i]+" From and To "+dateTo[i]);
+							urlReturn = "";
+							var getJsonUrl = formalUrl(urlJson);
+							(function (i) {
+								$.getJSON("http://localhost:8080"+getJsonUrl, function (data) {
+								console.log(formatLabelDate(dateFrom[i]));
+									dataPoints1.push({
+										x: dateFrom[i],
+										y: data.total
+									});
+								});
+							})(i);
+							//dateObj.setMonth(date.getMonth() - 1);
+						}
+					}
+							
+					getPrevious();
+					
+					function formalUrl(urlFormat) {
+						for (var i=0; i < urlFormat.length; i++) {
+							if (urlFormat.charCodeAt(i) <= 127) {
+								urlReturn += urlFormat.charAt(i);
+							}
+						}
+						console.log(urlReturn);
+						return urlReturn;
+					}
+					
+					var chart = new CanvasJS.Chart("chartContainer", {
+						animationEnabled: true,
+						title:{
+							text: "Incident trending by status (by month)"
+						},
+						axisX: {
+							valueFormatString: "MMM YY"
+						},
+						axisY: {
+							title: "Issue Count",
+							includeZero: true,
+							suffix: ""
+						},
+						legend:{
+							cursor: "pointer",
+							fontSize: 16
+						},
+						toolTip:{
+							shared: true
+						},
+						data: [{
+							name: "Open",
+							type: "spline",
+							yValueFormatString: "",
+							showInLegend: true,
+							dataPoints: dataPoints1
+						}]
+					});
+					chart.render();
+
+					function toggleDataSeries(e){
+						if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+							e.dataSeries.visible = false;
+						}
+						else{
+							e.dataSeries.visible = true;
+						}
+						chart.render();
+					}
+					// generates first set of dataPoints 
+					//getPrevious(1800);
+					//setInterval(function () { getPrevious() });
+			};
+			</script>
+			</head>
+			<body>
+			<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+			</body>
+			</html>
+        ]]>
+    </Content>
+</Module>
